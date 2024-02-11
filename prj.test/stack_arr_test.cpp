@@ -1,5 +1,4 @@
-#include <stack/StackArr.h>
-
+#include <StackArr/StackArr.h>
 
 int main() {
 	std::cout << 0 << std::endl;
