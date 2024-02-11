@@ -1,9 +1,22 @@
 #include <StackArr/StackArr.h>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include "doctest.h"
 
-int main() {
-	std::cout << 0 << std::endl;
+TEST_CASE("stack ctor") {
+	StackArr test;
+	TempComplex test_num(1, 1);
 
-	StackArr a(3);
+	test.push(test_num);
+	test.push(test_num);
+	test.push(test_num);
+	test.push(test_num);
 
-	return 0;
+	
+
+	CHECK_EQ(false, test.IsEmpty());
+	/*CHECK_EQ(test_num, test.Top());*/
+
+	/*test.pop();
+
+	CHECK_EQ(true, test.IsEmpty());*/
 }
