@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <algorithm>
+#include <sstream>
 
 class TempComplex
 {
@@ -27,11 +29,12 @@ class StackArr
 {
 private:
 	TempComplex* data = nullptr;
-	int size = 1;
-	int i_head = 1;
+	int size = 0;
+	int i_head = 0;
 public:
 	StackArr();
 	StackArr(const StackArr& a);
+	StackArr(const int size);
 	~StackArr();
 	StackArr& operator = (const StackArr& a);
 
