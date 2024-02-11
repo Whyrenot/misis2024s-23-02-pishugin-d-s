@@ -1,4 +1,4 @@
-#include "StackArr.hpp"
+#include "StackArr.h"
 
 StackArr::StackArr()
 {
@@ -12,7 +12,7 @@ StackArr::StackArr(const StackArr& a)
 	this->size = a.size;
 	this->i_head = a.i_head;
 	this->data = new TempComplex[size];
-	std::copy(a.data,d.data + d.size,data);
+	std::copy(a.data,a.data + a.size,data);
 }
 
 StackArr::StackArr(const int size)
