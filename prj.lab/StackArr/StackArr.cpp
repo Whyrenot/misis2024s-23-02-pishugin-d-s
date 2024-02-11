@@ -2,8 +2,6 @@
 
 StackArr::StackArr()
 {
-	size = 0;
-	i_head = 0;
 	data = new TempComplex[size];
 }
 
@@ -39,7 +37,7 @@ void StackArr::push(const TempComplex& c)
 		TempComplex* old_data = new TempComplex[size];
 		std::copy(data, data + size/2, old_data);
 		this->data = old_data;
-
+		//should we delete old_data
 	}
 	data[i_head] = c;
 	i_head++;
