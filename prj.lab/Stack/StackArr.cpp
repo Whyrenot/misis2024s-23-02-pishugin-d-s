@@ -33,12 +33,12 @@ StackArr::~StackArr()
 	delete[] data;
 }
 
-StackArr& StackArr::operator=(const StackArr& a)
-{
-	//this->data = a.data;
-	//this->size = a.size;
-	return *this;
-}
+//StackArr& StackArr::operator=(const StackArr& a)
+//{
+//	//this->data = a.data;
+//	//this->size = a.size;
+//	return *this;
+//}
 
 const TempComplex& StackArr::Top()
 {

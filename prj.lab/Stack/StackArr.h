@@ -36,7 +36,7 @@ public:
 	StackArr(const StackArr& a);
 	StackArr(const int size);
 	~StackArr();
-	StackArr& operator = (const StackArr& a);
+	//StackArr& operator = (const StackArr& a);
 
 	const TempComplex& Top();
 	void push(const TempComplex& c);
