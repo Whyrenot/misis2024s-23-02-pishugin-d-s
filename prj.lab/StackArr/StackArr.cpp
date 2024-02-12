@@ -2,14 +2,14 @@
 
 StackArr::StackArr()
 {
-	data = new TempComplex[size];
+	data = new Complex[size];
 }
 
 StackArr::StackArr(const StackArr& a)
 {
 	this->size = a.size;
 	this->i_head = a.i_head;
-	this->data = new TempComplex[size];
+	this->data = new Complex[size];
 	std::copy(a.data, a.data + a.size, this->data);
 }
 
@@ -25,16 +25,16 @@ StackArr::~StackArr()
 //	return *this;
 //}
 
-TempComplex& StackArr::Top()
+Complex& StackArr::Top()
 {
 	return data[i_head-1];
 }
 
-void StackArr::push(const TempComplex& c)
+void StackArr::push(const Complex& c)
 {
 	if (i_head >= size) {
 		this->size *= 2;
-		TempComplex* old_data = new TempComplex[size];
+		Complex* old_data = new Complex[size];
 		std::copy(data, data + size/2, old_data);
 		this->data = old_data;
 		//should we delete old_data
