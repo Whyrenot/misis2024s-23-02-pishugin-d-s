@@ -1,5 +1,5 @@
-#include <StackArr/StackArr.h>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <StackArr/StackArr.h>
 #include "doctest.h"
 
 TEST_CASE("stack ctor") {
@@ -10,9 +10,9 @@ TEST_CASE("stack ctor") {
 
 
 	CHECK_EQ(false, test.IsEmpty());
-	/*CHECK_EQ(test_num, test.Top());
+	CHECK_EQ(test_num, test.Top());
 
 	test.pop();
 
-	CHECK_EQ(true, test.IsEmpty());*/
+	CHECK_EQ(true, test.IsEmpty());
 }
