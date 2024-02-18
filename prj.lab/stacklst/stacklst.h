@@ -11,8 +11,9 @@ public:
 	StackLst();
 	~StackLst();
 	
+	Complex& Top();
 	void push(const Complex &a);
 	void print();
 	void pop();
-	void IsEmpty();
+	bool IsEmpty();
 };
