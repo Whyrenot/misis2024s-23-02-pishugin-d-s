@@ -17,6 +17,6 @@ target_link_libraries(stack_arr_test StackArr)
 
 
 add_executable(test_stack_lst test_stack_lst.cpp "test_stack_lst.cpp")
-target_link_libraries(test_stack_lst StackArr)
+target_link_libraries(test_stack_lst stacklst)
 
 

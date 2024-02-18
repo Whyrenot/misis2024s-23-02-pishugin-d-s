@@ -9,6 +9,7 @@ private:
 	Node* head = nullptr;
 public:
 	StackLst();
+	~StackLst();
 	
 	void push(const Complex &a);
 	void print();

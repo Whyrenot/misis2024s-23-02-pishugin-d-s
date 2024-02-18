@@ -13,7 +13,7 @@ void StackLst::push(const Complex& a)
 
 void StackLst::print()
 {
-	while (head->next != nullptr) {
+	while (head != nullptr) {
 		std::cout << head->c.re << " " << head->c.im << "\n";
 		head = head->next;
 	}
