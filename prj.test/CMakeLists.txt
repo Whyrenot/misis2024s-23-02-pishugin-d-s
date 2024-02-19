@@ -17,3 +17,7 @@ add_executable(test_stack_lst test_stack_lst.cpp "test_stack_lst.cpp")
 target_link_libraries(test_stack_lst stacklst)
 
 
+add_executable(test_queue_lst test_queue_lst.cpp "test_queue_lst.cpp")
+target_link_libraries(test_queue_lst queuelst)
+
+
