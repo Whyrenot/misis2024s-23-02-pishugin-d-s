@@ -20,4 +20,9 @@ target_link_libraries(test_stack_lst stacklst)
 add_executable(test_queue_lst test_queue_lst.cpp "test_queue_lst.cpp")
 target_link_libraries(test_queue_lst queuelst)
 
+add_executable(test_queue_arr test_queue_arr.cpp "test_queue_arr.cpp")
+target_link_libraries(test_queue_arr queuearr)
+
+add_executable(test_bitset test_bitset.cpp "test_bitset.cpp")
+target_link_libraries(test_bitset bitset)
 

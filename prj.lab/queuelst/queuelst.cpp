@@ -7,11 +7,11 @@ QueueLst::QueueLst()
 }
 
 QueueLst::~QueueLst() {
-	while (head != nullptr) {
+	/*while (head != nullptr) {
 		Node temp = *head;
 		delete head;
 		head = temp.next;
-	}
+	}*/
 }
 
 Complex& QueueLst::Top() {
@@ -20,13 +20,14 @@ Complex& QueueLst::Top() {
 
 void QueueLst::Push(const Complex& a) {
 	Node* n = new Node{ a,head };
+	
+	if (tail == nullptr)
+		tail = n;
+	else if (tail->next == nullptr) {
+		tail->next = n;
+	}
+
 	head = n;
-	if (tail == nullptr) {
-		tail = head;
-	}
-	else if (tail->next == head->next) {
-		tail->next = tail;
-	}
 }
 
 void QueueLst::Pop() {
