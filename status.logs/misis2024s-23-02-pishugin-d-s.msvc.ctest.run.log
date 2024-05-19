@@ -174,8 +174,8 @@ Release/D:/projects/misis2023f-23-check/misis2024s-23-02-pishugin-d-s/bin.check/
 Release/D:/projects/misis2023f-23-check/misis2024s-23-02-pishugin-d-s/bin.check/doctest_stacklst_m.exe.exe
 17/20 Test #20: doctest_stacklst_m ...............***Not Run   0.00 sec
 18/20 Test  #5: doctest_complex_m ................   Passed    0.02 sec
-19/20 Test  #7: doctest_rational_io ..............***Failed    0.01 sec
-20/20 Test  #8: doctest_rational_m ...............   Passed    0.01 sec
+19/20 Test  #7: doctest_rational_io ..............***Failed    0.02 sec
+20/20 Test  #8: doctest_rational_m ...............   Passed    0.02 sec
 
 10% tests passed, 18 tests failed out of 20
 
