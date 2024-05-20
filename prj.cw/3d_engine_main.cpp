@@ -315,7 +315,7 @@ int main() {
 		c.update();
 
 		window.clear();
-		c.draw(window);
+		c.draw(window);//curse word
 		window.display();
 	}
 
