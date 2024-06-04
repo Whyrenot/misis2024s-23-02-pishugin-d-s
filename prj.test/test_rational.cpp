@@ -1,6 +1,8 @@
 #include <rational/rational.hpp>
+//#include "doctest.h"
 
 int main() {
-	Rational r;
+	Rational a;
+	Rational b;
 
 }

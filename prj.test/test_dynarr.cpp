@@ -1,25 +1,115 @@
+//#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+//#include "doctest.h"
+//
+//#include <dynarr/dynarr.hpp>
+//
+//TEST_CASE("dynarr ctor") {
+//  DynArr arr_def;
+//  CHECK_EQ(arr_def.size(), 0);
+//
+//  const int size = 5;
+//  DynArr arr_s(size);
+//  CHECK_EQ(arr_s.size(), size);
+//
+//  CHECK_THROWS(void(DynArr(0)));
+//  CHECK_THROWS(void(DynArr(-size)));
+//}
+//
+//TEST_CASE("dynarr op[]") {
+//  const int size = 5;
+//  DynArr arr(size);
+//  CHECK_EQ(arr[0], 0);
+//  CHECK_EQ(arr[arr.size() - 1], 0);
+//  CHECK_THROWS(arr[-1]);
+//  CHECK_THROWS(arr[arr.size()]);
+//}
+
+#include <dynarr/dynarr.hpp>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-#include <dynarr/dynarr.hpp>
-
 TEST_CASE("dynarr ctor") {
-  DynArr arr_def;
-  CHECK_EQ(arr_def.size(), 0);
+    DynArr d1;
+    CHECK_EQ(0, d1.Size());
 
-  const int size = 5;
-  DynArr arr_s(size);
-  CHECK_EQ(arr_s.size(), size);
+    DynArr d2(4);
+    CHECK_EQ(4, d2.Size());
+    CHECK_EQ(0, d2[0]);
+    CHECK_EQ(0, d2[1]);
+    CHECK_EQ(0, d2[2]);
+    CHECK_EQ(0, d2[3]);
 
-  CHECK_THROWS(void(DynArr(0)));
-  CHECK_THROWS(void(DynArr(-size)));
-}
+    d2[0] = 0;
+    d2[1] = 1;
+    d2[2] = 2;
+    d2[3] = 3;
+    CHECK_EQ(0, d2[0]);
+    CHECK_EQ(1, d2[1]);
+    CHECK_EQ(2, d2[2]);
+    CHECK_EQ(3, d2[3]);
 
-TEST_CASE("dynarr op[]") {
-  const int size = 5;
-  DynArr arr(size);
-  CHECK_EQ(arr[0], 0);
-  CHECK_EQ(arr[arr.size() - 1], 0);
-  CHECK_THROWS(arr[-1]);
-  CHECK_THROWS(arr[arr.size()]);
+    DynArr d3(d2);
+    CHECK_EQ(4, d3.Size());
+    CHECK_EQ(0, d3[0]);
+    CHECK_EQ(1, d3[1]);
+    CHECK_EQ(2, d3[2]);
+    CHECK_EQ(3, d3[3]);
+    d3[0] = 10;
+    CHECK_EQ(10, d3[0]);
+    CHECK_EQ(0, d2[0]);
+    d3[0] = 0;
+
+    d3.Resize(8);
+    d3[5] = 10;
+    CHECK_EQ(8, d3.Size());
+    CHECK_EQ(0, d3[0]);
+    CHECK_EQ(1, d3[1]);
+    CHECK_EQ(2, d3[2]);
+    CHECK_EQ(3, d3[3]);
+    CHECK_EQ(0, d3[4]);
+    CHECK_EQ(10, d3[5]);
+    CHECK_EQ(0, d3[6]);
+    CHECK_EQ(0, d3[7]);
+    CHECK_THROWS(d3[8]);
+
+    d3.Resize(4);
+    CHECK_EQ(4, d3.Size());
+    CHECK_EQ(0, d3[0]);
+    CHECK_EQ(1, d3[1]);
+    CHECK_EQ(2, d3[2]);
+    CHECK_EQ(3, d3[3]);
+    CHECK_THROWS(d3[4]);
+
+    d3.Resize(6);
+    CHECK_EQ(6, d3.Size());
+    CHECK_EQ(0, d3[0]);
+    CHECK_EQ(1, d3[1]);
+    CHECK_EQ(2, d3[2]);
+    CHECK_EQ(3, d3[3]);
+    CHECK_EQ(0, d3[4]);
+    CHECK_EQ(0, d3[5]);
+    CHECK_THROWS(d3[6]);
+
+    d1 = d3;
+    CHECK_EQ(6, d1.Size());
+    CHECK_EQ(0, d1[0]);
+    CHECK_EQ(1, d1[1]);
+    CHECK_EQ(2, d1[2]);
+    CHECK_EQ(3, d1[3]);
+    CHECK_EQ(0, d1[4]);
+    CHECK_EQ(0, d1[5]);
+
+    d1 = d2;
+    CHECK_EQ(4, d1.Size());
+    CHECK_EQ(0, d1[0]);
+    CHECK_EQ(1, d1[1]);
+    CHECK_EQ(2, d1[2]);
+    CHECK_EQ(3, d1[3]);
+
+    CHECK_THROWS(DynArr(-5));
+    CHECK_THROWS(d1.Resize(-2));
+    CHECK_THROWS(DynArr(0));
+    CHECK_THROWS(d1.Resize(0));
+    CHECK_THROWS(d1[-10]);
+    CHECK_THROWS(d1[80]);
 }
