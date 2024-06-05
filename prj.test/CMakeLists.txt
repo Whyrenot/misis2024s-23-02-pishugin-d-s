@@ -26,6 +26,3 @@ target_link_libraries(test_queue_arr queuearr)
 
 add_executable(test_bitset test_bitset.cpp "test_bitset.cpp")
 target_link_libraries(test_bitset bitset)
-
-add_executable(test_robocrawl test_robocrawl.cpp "test_robocrawl.cpp")
-target_link_libraries(test_robocrawl robocrawl)

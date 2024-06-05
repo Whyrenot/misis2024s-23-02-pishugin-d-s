@@ -1,66 +1,70 @@
-#pragma once
-#ifndef BITSET_BITSET_HPP_20240318
-#define BITSET_BITSET_HPP_20240318
-
-#include <cstdint>
-#include <iosfwd>
-#include <vector>
-
-class BitSet {
-public:
-	BitSet() = default;
-
-	BitSet(const BitSet&) = default;
-
-	BitSet(BitSet&&) = default;
-
-	BitSet(const std::int32_t);
-
-	BitSet& operator=(const BitSet&) = default;
-
-	BitSet& operator=(BitSet&&) = default;
-
-	~BitSet() = default;
-
-	[[nodiscard]] bool operator==(const BitSet& rhs) const noexcept;
-
-	[[nodiscard]] bool operator!=(const BitSet& rhs) const noexcept;
-
-	int32_t Size() const noexcept { return size_; }
-
-	void Resize(const int32_t size); // 0 < size
-
-	[[nodiscard]] bool Get(const int32_t idx) const;
-
-	void Set(const int32_t idx, const bool val);
-
-	void Fill(const bool val) noexcept;
-
-	[[nodiscard]] BitSet& operator&=(const BitSet& rhs);
-
-	[[nodiscard]] BitSet& operator|=(const BitSet& rhs);
-
-	[[nodiscard]] BitSet& operator^=(const BitSet& rhs);
-
-	[[nodiscard]] BitSet operator~();
-
-	// ? operator[](const int32_t) - what can return
-	// std::ostream& WriteTxt(std::ostream&)
-	// std::ostream& WriteBinary(std::ostream&)
-	// std::istream& ReadTxt(std::istream&)
-	// std::istream& RaadBinary(std::istream&)
-private:
-	std::int32_t size_ = 0;
-	std::vector<uint32_t> bits_;
-};
-
-// std::ostream& operaror<<(std::ostream&, const BitSet&);
-// std::istream& operaror>>(std::istream&, BitSet&);
-
-[[nodiscard]] BitSet operator&(const BitSet& lhs, const BitSet& rhs);
-
-[[nodiscard]] BitSet operator|(const BitSet& lhs, const BitSet& rhs);
-
-[[nodiscard]] BitSet operator^(const BitSet& lhs, const BitSet& rhs);
-
-#endif
+//#ifndef BITSET_HPP
+//#define BITSET_HPP
+//
+//#include <iostream>
+//#include <cstdint>
+//#include <vector>
+//#include <algorithm>
+//#include <stdexcept>
+//
+//class BitSet {
+//private:
+//    class BiA {
+//    public:
+//        BiA(BitSet* b, int32_t ind) : b_(b), ind_(ind) {}
+//        ~BiA() = default;
+//
+//        explicit operator bool();
+//
+//        bool operator=(const bool v);
+//        const bool operator=(const bool v) const;
+//
+//        BiA& operator=(const BiA& v);
+//        const BiA& operator=(const BiA& v) const;
+//
+//    private:
+//        BitSet* b_ = nullptr;
+//        int32_t ind_ = 0;
+//    };
+//
+//    std::int32_t size_ = 0;
+//    std::vector<std::uint32_t> bits_;
+//
+//
+//public:
+//    BitSet() = default;
+//    BitSet(const BitSet& rhs) = default;
+//    BitSet(BitSet&& rhs) = default;
+//
+//    explicit BitSet(const std::int32_t size) : size_(size), bits_(size) {}
+//
+//    BitSet& operator=(const BitSet& rhs) = default;
+//    BitSet& operator=(BitSet&& rhs) = default;
+//
+//    ~BitSet() = default;
+//
+//    [[nodiscard]] bool operator==(const BitSet& rhs) const noexcept;
+//    [[nodiscard]] bool operator!=(const BitSet& rhs) const noexcept;
+//
+//    BiA operator[](const int32_t& rhs);
+//
+//    std::int32_t Size() const noexcept { return size_; }
+//    void Resize(const std::int32_t size);
+//    void Fill(const bool val) noexcept;
+//    [[nodiscard]] bool Get(const int32_t idx) const;
+//    void Set(const int32_t idx, const bool val);
+//
+//    [[nodiscard]] BitSet operator~();
+//    [[nodiscard]] BitSet& operator|=(const BitSet& rhs);
+//    [[nodiscard]] BitSet& operator&=(const BitSet& rhs);
+//    [[nodiscard]] BitSet& operator^=(const BitSet& rhs);
+//
+//    std::vector<std::uint32_t> same_size(const BitSet& v1, const BitSet& v2);
+//};
+//
+//[[nodiscard]] BitSet operator&(const BitSet& lhs, const BitSet& rhs);
+//[[nodiscard]] BitSet operator|(const BitSet& lhs, const BitSet& rhs);
+//[[nodiscard]] BitSet operator^(const BitSet& lhs, const BitSet& rhs);
+//
+//
+//#endif
