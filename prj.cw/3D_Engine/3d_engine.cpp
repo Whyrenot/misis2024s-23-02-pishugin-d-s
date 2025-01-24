@@ -7,6 +7,9 @@
 #include <strstream>
 #include <math.h>
 #include <algorithm>
+#include <unordered_map>
+#include <functional>
+#include <thread>
 #define PI 3.14159265359
 double HEIGHT = 800;
 double WIDTH = 800;
@@ -16,19 +19,15 @@ double FIELD_OF_VIEW = 90;
 
 
 class Matrix {
-protected:
+public:
 	std::vector<std::vector<double>> v;
 public:
-	Matrix() {
-		v = std::vector<std::vector<double>>(4, std::vector<double>(1, 0));
-	}
-	Matrix(const std::vector<std::vector<double>> v) {
-		this->v = v;
-	}
-	Matrix(const Matrix& m) {
-		this->v = m.v;
-	}
-	void print() {
+	Matrix() : v(std::vector<std::vector<double>>(4, std::vector<double>(1, 0))) {}
+	Matrix(const std::vector<std::vector<double>>& vec) : v(vec) {}
+	Matrix(const Matrix& m) = default;
+	Matrix(Matrix&& m) noexcept = default;
+	Matrix(std::vector<std::vector<double>>&& vec) : v(vec) {}
+	virtual void print() {
 		for (auto row : v) {
 			for (auto col : row) {
 				std::cout << col << " ";
@@ -36,23 +35,21 @@ public:
 			std::cout << "\n";
 		}
 	}
-	std::vector<double>* operator [](const int i) {
-
-		return &v[i];
+	std::vector<double>& operator[](int i) {
+		return v[i];
 	}
-	void operator = (const Matrix& m) {
-		v = m.v;
-	}
-	void operator = (const std::vector<std::vector<double>> v) {
-		this->v = v;
+	Matrix& operator=(const Matrix& m) = default;
+	Matrix& operator=(Matrix&& m) noexcept = default;
+	Matrix& operator=(const std::vector<std::vector<double>>& vec) {
+		v = vec;
 	}
 	Matrix operator * (const Matrix& m) {
 		if (v[0].size() == m.v.size()) {
 			std::vector<std::vector<double>> c(v.size(), std::vector<double>(m.v[0].size(), 0));
-			for (int row = 0; row < v.size(); row++) { // ïåðåáîð ïî ñòðîêàì ïåðâîé ìàòðèö
-				for (int col = 0; col < m.v[0].size(); col++) {  // ïåðåáîð ïî ñòîëáöàì âòîðîé ìàòðèöû
-					for (int inner = 0; inner < m.v.size(); inner++) { // ïåðåáîð îäíîâðåìåííî ïî ñòîëáöó ïåðâîé ìàòðèöû è ñòðîêàì âòîðîé
-						c.at(row).at(col) += v.at(row).at(inner) * m.v.at(inner).at(col);
+			for (int row = 0; row < v.size(); row++) { // Ð¿ÐµÑ€ÐµÐ±Ð¾Ñ€ Ð¿Ð¾ ÑÑ‚Ñ€Ð¾ÐºÐ°Ð¼ Ð¿ÐµÑ€Ð²Ð¾Ð¹ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†
+				for (int col = 0; col < m.v[0].size(); col++) {  // Ð¿ÐµÑ€ÐµÐ±Ð¾Ñ€ Ð¿Ð¾ ÑÑ‚Ð¾Ð»Ð±Ñ†Ð°Ð¼ Ð²Ñ‚Ð¾Ñ€Ð¾Ð¹ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ñ‹
+					for (int inner = 0; inner < m.v.size(); inner++) { // Ð¿ÐµÑ€ÐµÐ±Ð¾Ñ€ Ð¾Ð´Ð½Ð¾Ð²Ñ€ÐµÐ¼ÐµÐ½Ð½Ð¾ Ð¿Ð¾ ÑÑ‚Ð¾Ð»Ð±Ñ†Ñƒ Ð¿ÐµÑ€Ð²Ð¾Ð¹ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ñ‹ Ð¸ ÑÑ‚Ñ€Ð¾ÐºÐ°Ð¼ Ð²Ñ‚Ð¾Ñ€Ð¾Ð¹
+						/*c.at(row).at(col) += v.at(row).at(inner) * m.v.at(inner).at(col);*/ c[row][col] += v[row][inner] * m.v[inner][col];
 					}
 				}
 			}
@@ -62,58 +59,80 @@ public:
 			std::cout << "Impossible\n";
 		}
 	}
-	void operator *= (const Matrix& m) {
+	Matrix& operator *= (const Matrix& m) {
 		*this = (*this * m);
+		return *this;
 	}
 };
 
+Matrix operator*(const Matrix& lhs, const Matrix& rhs) {
+	Matrix matrix(lhs);
+	return matrix *= rhs;
+}
+
+Matrix operator*(Matrix&& lhs, const Matrix& rhs) {
+	return lhs *= rhs;
+}
+
+Matrix operator*(const Matrix& lhs, Matrix&& rhs) {
+	Matrix matrix(lhs);
+	return matrix *= rhs;
+}
+
+Matrix operator*(Matrix&& lhs, Matrix&& rhs) {
+	return lhs *= rhs;
+}
+
+
 class Vec3d : public Matrix {
 public:
-	double& x = v[0][0];
-	double& y = v[1][0];
-	double& z = v[2][0];
-	double& w = v[3][0];
-
-	Vec3d() :Matrix() {}
-	Vec3d(const std::vector<std::vector<double>> v) : Matrix(v) {}
+	Vec3d() : Matrix() {}
+	Vec3d(const std::vector<std::vector<double>>& v) : Matrix(v) {}
+	Vec3d(std::vector<std::vector<double>>&& v) : Matrix(v) {}
 	Vec3d(const Matrix& m) : Matrix(m) {}
 	Vec3d(double x, double y, double z, double w = 1) {
 		v[0][0] = x, v[1][0] = y, v[2][0] = z, v[3][0] = w;
 	}
-	void operator = (const Vec3d& m) {
-		this->v = m.v;
+	Vec3d& operator=(const Vec3d& m) {
+		v = m.v;
+		return *this;
+	}
+	void print() override {
+		std::cout << v[0][0] << " " << v[1][0]<< " " << v[2][0] << " " << v[3][0] << "\n";
 	}
 };
 
 double vec_dot_product(const Vec3d& v1, const Vec3d& v2) {
-	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+	return v1.v[0][0] * v2.v[0][0] + v1.v[1][0] * v2.v[1][0] + v1.v[2][0] * v2.v[2][0];
 }
 
 Vec3d vec_cross_product(const Vec3d& v1, const Vec3d& v2) {
-	return Vec3d(v1.y * v2.z - v2.y * v1.z, -(v1.x * v2.z - v1.z * v2.x), v1.x * v2.y - v1.y * v2.x);
+	return Vec3d(v1.v[1][0] * v2.v[2][0] - v2.v[1][0] * v1.v[2][0], -(v1.v[0][0] * v2.v[2][0] - v1.v[2][0] * v2.v[0][0]), v1.v[0][0] * v2.v[1][0] - v1.v[1][0] * v2.v[0][0]);
 }
 
 class Polygon {
 public:
-	Matrix vertex1, vertex2, vertex3;
+	Vec3d *vertex1, *vertex2, *vertex3;
 	sf::Color color;
-public:
-	Polygon(const Matrix& vertex1, const  Matrix& vertex2, const Matrix& vertex3, const sf::Color& color) {
-		this->vertex1 = vertex1, this->vertex2 = vertex2, this->vertex3 = vertex3, this->color = color;
+
+	Polygon(Vec3d &vertex1, Vec3d &vertex2, Vec3d &vertex3, const sf::Color& color) {
+		this->vertex1 = &vertex1, this->vertex2 = &vertex2, this->vertex3 = &vertex3, this->color = color;
 	}
 };
 
 class Mesh {
 protected:
 	std::vector<Polygon> polygon_array;
+	std::vector<Vec3d> verts;
+	std::vector<Vec3d> transformed_verts;
 	Vec3d position;
 	double scale;
 	double angle_x = 0, angle_z = 0;
+	Matrix p, t, a, b;
 public:
 	Mesh(const Vec3d& position, const double scale) {
 		this->position = position;
 		this->scale = scale;
-
 	}
 	void LoadFromFile(const std::string& name) {
 
@@ -121,10 +140,6 @@ public:
 		if (!f.is_open())
 			std::cout << "ERROR READING MESH FILE\n";
 		else {
-
-			// Local cache of verts
-			std::vector<Vec3d> verts;
-
 			while (!f.eof()) {
 				char line[128];
 				f.getline(line, 128);
@@ -140,6 +155,7 @@ public:
 					s >> junk >> x >> y >> z;
 					Vec3d v(x, y, z);
 					verts.push_back(v);
+					transformed_verts.push_back(v);
 				}
 
 				if (line[0] == 'f')
@@ -147,10 +163,9 @@ public:
 					int f[3];
 					s >> junk >> f[0] >> f[1] >> f[2];
 					int r = rand() % 100;
-					polygon_array.push_back(Polygon(verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1], sf::Color(75 + r, 100 + r, 100 + r)));
+					polygon_array.push_back(Polygon(transformed_verts[f[0] - 1], transformed_verts[f[1] - 1], transformed_verts[f[2] - 1], sf::Color(75 + r, 100 + r, 100 + r)));
 				}
 			}
-			std::cout << polygon_array.size() << std::endl;
 		}
 	}
 	void update() {
@@ -158,27 +173,27 @@ public:
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		{
-			position.y += 0.1;
+			position.v[1][0] += 0.1;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 		{
-			position.y -= 0.1;
+			position.v[1][0] -= 0.1;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 		{
-			position.x += 0.1;
+			position.v[0][0] += 0.1;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
-			position.x -= 0.1;
+			position.v[0][0] -= 0.1;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 		{
-			position.z += 0.1;
+			position.v[2][0] += 0.1;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 		{
-			position.z -= 0.1;
+			position.v[2][0] -= 0.1;
 		}
 
 
@@ -199,92 +214,101 @@ public:
 		{
 			angle_x -= 0.7;
 		}
-	}
-	void draw(sf::RenderWindow& window) {
 
-		Matrix p({
+		p = Matrix({
 			{ (WIDTH / HEIGHT) / (std::tan((FIELD_OF_VIEW / 2) * PI / 180)),0,0,0},
 			{ 0, 1 / (std::tan((FIELD_OF_VIEW / 2) * PI / 180)),0,0},
 			{ 0,0,Z_FAR / (Z_FAR - Z_NEAR),-Z_FAR * Z_NEAR / (Z_FAR - Z_NEAR) },   // 1 / (std::tan(FIELD_OF_VIEW / 2 * PI / 180))
 			{ 0,0,1,0 },
-			});
+		});
 
-		Matrix t({
-			{1,0,0,position.x},
-			{0,1,0,position.y},
-			{0,0,1,position.z},
+		t = Matrix({
+			{1,0,0,position.v[0][0]}, // Ð’ÐžÐ¢ Ð¢Ð£Ð¢ Ð±Ð«Ð›Ð ÐžÐ¨Ð˜Ð‘ÐšÐ
+			{0,1,0,position.v[1][0]},
+			{0,0,1,position.v[2][0]},
 			{0,0,0,1},
-			});
+		});
 
-		Matrix a({
+		a = Matrix({
 			{1,0,0,0},
 			{0, std::cos(angle_x * PI / 180),-std::sin(angle_x * PI / 180),0},
 			{0, std::sin(angle_x * PI / 180),std::cos(angle_x * PI / 180),0},
 			{0,0,0,1}
-			});
+		});
 
-		Matrix b({
+		b = Matrix({
 			{std::cos(angle_z * PI / 180),0,std::sin(angle_z * PI / 180),0},
 			{0, 1,0,0},
 			{-std::sin(angle_z * PI / 180), 0,std::cos(angle_z * PI / 180),0},
 			{0,0,0,1}
-			});
+		});
 
+		for (int i = 0; i < verts.size(); i++) {
+			Matrix mat(t);
+			mat *= a;
+			mat *= b;
+			mat *= verts[i];
+			transformed_verts[i] = std::move(mat);
+		}
+	}
+	void draw(sf::RenderWindow& window) {
 
 		std::vector<sf::VertexArray> tris;
 		std::vector<sf::Vector2f> z_buffer;
+
 		int index = 0;
 
-		for (auto el : polygon_array) {
+		for (auto& el : polygon_array) {
 
 			sf::VertexArray tri(sf::Triangles, 3);
-			tri[0].color = el.color;
-			tri[1].color = el.color;
-			tri[2].color = el.color;
-
-			Vec3d  transformed_v1 = t * a * b * el.vertex1;
-			Vec3d  transformed_v2 = t * a * b * el.vertex2;
-			Vec3d  transformed_v3 = t * a * b * el.vertex3;
-
+			
 			// cross product of 2 vectors
-			Vec3d v1v2(transformed_v2.x - transformed_v1.x, transformed_v2.y - transformed_v1.y, transformed_v2.z - transformed_v1.z);
-			Vec3d v1v3(transformed_v3.x - transformed_v1.x, transformed_v3.y - transformed_v1.y, transformed_v3.z - transformed_v1.z);
+			Vec3d v1v2((*el.vertex2).v[0][0] - (*el.vertex1).v[0][0], (*el.vertex2).v[1][0] - (*el.vertex1).v[1][0], (*el.vertex2).v[2][0] - (*el.vertex1).v[2][0]);
+			Vec3d v1v3((*el.vertex3).v[0][0] - (*el.vertex1).v[0][0], (*el.vertex3).v[1][0] - (*el.vertex1).v[1][0], (*el.vertex3).v[2][0] - (*el.vertex1).v[2][0]);
 			Vec3d normal = vec_cross_product(v1v2, v1v3);
+			Vec3d camera_normal = Vec3d(((*el.vertex1).v[0][0] + (*el.vertex2).v[0][0] + (*el.vertex3).v[0][0]) / 3, ((*el.vertex1).v[1][0] + (*el.vertex2).v[1][0] + (*el.vertex3).v[1][0]) / 3, ((*el.vertex1).v[2][0] + (*el.vertex2).v[2][0] + (*el.vertex3).v[2][0]) / 3);
 
 
-			Vec3d v1 = p * transformed_v1; // 3d to 2d
-			Vec3d v2 = p * transformed_v2;
-			Vec3d v3 = p * transformed_v3;
 
-			if (vec_dot_product(normal, Vec3d((transformed_v1.x + transformed_v2.x + transformed_v3.x) / 3, (transformed_v1.y + transformed_v2.y + transformed_v3.y) / 3, (transformed_v1.z + transformed_v2.z + transformed_v3.z) / 3)) < 0) { // Vec3d(position.x, position.y, position.z)
+			if (vec_dot_product(normal, camera_normal) <= 0) {
 
-				if (v1.w != 0) {
-					v1.x /= v1.w;
-					v1.y /= v1.w;
-					v1.z /= v1.w;
+				tri[0].color = el.color;
+				tri[1].color = el.color;
+				tri[2].color = el.color;
+
+				Vec3d v1 = p * (*el.vertex1); 
+				if (v1.v[3][0] != 0) {
+					v1.v[0][0] /= v1.v[3][0];
+					v1.v[1][0] /= v1.v[3][0];
+					v1.v[2][0] /= v1.v[3][0];
 				}
 
-				if (v2.w != 0) {
-					v2.x /= v2.w;
-					v2.y /= v2.w;
-					v2.z /= v2.w;
+				Vec3d v2 = p * (*el.vertex2);
+				if (v2.v[3][0] != 0) {
+					v2.v[0][0] /= v2.v[3][0];
+					v2.v[1][0] /= v2.v[3][0];
+					v2.v[2][0] /= v2.v[3][0];
 				}
 
-				if (v3.w != 0) {
-					v3.x /= v3.w;
-					v3.y /= v3.w;
-					v3.z /= v3.w;
+				Vec3d v3 = p * (*el.vertex3);
+				if (v3.v[3][0] != 0) {
+					v3.v[0][0] /= v3.v[3][0];
+					v3.v[1][0] /= v3.v[3][0];
+					v3.v[2][0] /= v3.v[3][0];
 				}
 
-				tri[0].position = sf::Vector2f(v1.x * scale + WIDTH / 2, v1.y * scale + HEIGHT / 2);
-				tri[1].position = sf::Vector2f(v2.x * scale + WIDTH / 2, v2.y * scale + HEIGHT / 2);
-				tri[2].position = sf::Vector2f(v3.x * scale + WIDTH / 2, v3.y * scale + HEIGHT / 2);
+				tri[0].position = sf::Vector2f(v1.v[0][0] * scale + WIDTH / 2, v1.v[1][0] * scale + HEIGHT / 2);
+				tri[1].position = sf::Vector2f(v2.v[0][0] * scale + WIDTH / 2, v2.v[1][0] * scale + HEIGHT / 2);
+				tri[2].position = sf::Vector2f(v3.v[0][0] * scale + WIDTH / 2, v3.v[1][0] * scale + HEIGHT / 2);
 
+			
 				tris.push_back(tri);
-				z_buffer.push_back(sf::Vector2f((transformed_v1.z + transformed_v2.z + transformed_v3.z) / 3, index));
+				z_buffer.push_back(sf::Vector2f((v1.v[2][0] + v2.v[2][0] + v3.v[2][0]) / 3, index));
 				index++;
 			}
+			
 		}
+		
 		std::sort(z_buffer.begin(), z_buffer.end(), [](sf::Vector2f& a, sf::Vector2f& b) {
 			return a.x > b.x;
 		});
@@ -298,11 +322,18 @@ public:
 
 int main() {
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "SFML");
+	//window.setFramerateLimit(30);
 
-	Mesh c(Vec3d(0, 0, 10), 300);
-	c.LoadFromFile("teapot.obj");
+	Mesh c(Vec3d(0, 0, 3), 300);
+	c.LoadFromFile("resources/1untitled.obj");
 
-
+	//////
+	float fps;
+	sf::Clock clock = sf::Clock::Clock();
+	sf::Time previousTime = clock.getElapsedTime();
+	sf::Time currentTime;
+	//////
+	
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -314,12 +345,22 @@ int main() {
 
 		c.update();
 
+
 		window.clear();
-		c.draw(window);//curse word
+		c.draw(window);
 		window.display();
+		//window.close();
+
+
+		///////
+		currentTime = clock.getElapsedTime();
+		fps = 1.0f / (currentTime.asSeconds() - previousTime.asSeconds()); // the asSeconds returns a float
+		std::cout << "fps =" << floor(fps) << std::endl; // flooring it will make the frame rate a rounded number
+		previousTime = currentTime;
+		/////////
+
+
 	}
-
-
 
 	return 0;
 }
